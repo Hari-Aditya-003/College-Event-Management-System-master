@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Sanchalana 2K20 Event Registration - Crypto Hunt</title>
+    <title>Stepcone 2K25</title>
     <?php require 'utils/styles.php'; ?>
     <style>
         /* SOP container styling */
@@ -87,7 +87,7 @@
         <div class="container">
             <!-- SOP Section for Crypto Hunt -->
             <div class="col-md-10 col-md-offset-1 sop-container">
-                <h2> Standard Operating Procedure (SOP)</h2>
+                <h2>Standard Operating Procedure (SOP)</h2>
                 <p>
                     This event is a thrilling and intellectually stimulating challenge that involves solving cryptographic puzzles and clues hidden in a series of digital and physical locations. 
                     Participants are expected to utilize their analytical, problem-solving, and code-breaking skills to decipher clues that lead to the next stage of the hunt.
@@ -99,7 +99,7 @@
                 <p>
                     <strong>Rules and Guidelines:</strong>
                     <ul>
-                        <li>Teams can consist of up to 4 members.</li>
+                        <li>Teams can consist of up to 1 member.</li>
                         <li>All participants must bring their own devices (laptops or smartphones) with internet connectivity.</li>
                         <li>Use of external help or collaboration with other teams is strictly prohibited.</li>
                         <li>The event is time-bound, and the team with the fastest completion time wins.</li>
@@ -149,3 +149,59 @@
     <?php require 'utils/footer.php'; ?>
 </body>
 </html>
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+include 'classes/db1.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $usn = mysqli_real_escape_string($conn, $_POST['usn']);
+    $event_id = (int)$_POST['event_id'];
+
+    // Insert participant into the database
+    $insert_query = "INSERT INTO participent (usn, event_id) VALUES ('$usn', $event_id)";
+    
+    if (mysqli_query($conn, $insert_query)) {
+        // Fetch the email of the participant (assuming you have an email field in the participant table)
+        $email_query = "SELECT email FROM participent WHERE usn = '$usn'";
+        $email_result = mysqli_query($conn, $email_query);
+        $participant = mysqli_fetch_assoc($email_result);
+        
+        if ($participant) {
+            // Send email
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'narendrabaratam43@gmail.com'; // Your email
+            $mail->Password = 'hges oneh rfsg azuv'; // Your email password
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+            $mail->setFrom('narendrabaratam43@gmail.com', 'Stepcone 2K25 Team');
+            $mail->addAddress($participant['email'], $usn);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Registration Confirmation';
+            $mail->Body = "
+                <h3>Registration Successful!</h3>
+                <p>Dear participant,</p>
+                <p>Thank you for registering for the Crypto Hunt event. Your USN is <strong>$usn</strong>.</p>
+                <p>We look forward to seeing you at the event!</p>
+                <p>Best regards,<br>Sanchalana 2K20 Team</p>";
+
+            try {
+                $mail->send();
+                echo "<script>alert('Registration successful! A confirmation email has been sent to you.'); window.location.href = 'usn.php';</script>";
+            } catch (Exception $e) {
+                echo "Mailer Error: {$mail->ErrorInfo}";
+            }
+        } else {
+            echo "Participant email not found!";
+        }
+    } else {
+        echo "Error registering participant: " . mysqli_error($conn);
+    }
+}
+?>

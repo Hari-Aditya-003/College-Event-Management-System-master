@@ -65,7 +65,7 @@ if (isset($_GET['delete_usn']) && isset($_GET['event_id'])) {
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sanchalana 2k20</title>
+    <title>Stepcone 2K25</title>
 
     <style>
     /* Centering the form and making the button wider */

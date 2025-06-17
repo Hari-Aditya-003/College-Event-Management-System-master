@@ -22,13 +22,13 @@ if (isset($_POST['acceptUpdate'])) {
     // Update logic when "Accept" is clicked
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $branch = mysqli_real_escape_string($conn, $_POST['branch']);
-    $sem = mysqli_real_escape_string($conn, $_POST['sem']);
+    $year = mysqli_real_escape_string($conn, $_POST['year']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $college = mysqli_real_escape_string($conn, $_POST['college']);
 
     // Update the student details in the database
-    $updateQuery = "UPDATE participent SET name='$name', branch='$branch', sem='$sem', email='$email', phone='$phone', college='$college' WHERE usn='$usn'";
+    $updateQuery = "UPDATE participent SET name='$name', branch='$branch', year='$year', email='$email', phone='$phone', college='$college' WHERE usn='$usn'";
     
     if (mysqli_query($conn, $updateQuery)) {
         // Send confirmation email to the updated email address
@@ -38,13 +38,13 @@ if (isset($_POST['acceptUpdate'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'narendrabaratam2004@gmail.com'; // Your SMTP email
-            $mail->Password = 'qzmt actw tixh pval'; // Your SMTP email password
+            $mail->Username = 'narendrabaratam43@gmail.com'; // Your SMTP email
+            $mail->Password = 'hges oneh rfsg azuv'; // Your SMTP email password
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
             // Recipients
-            $mail->setFrom('your_email@gmail.com', 'Stepcone 2K25'); // Your email and display name
+            $mail->setFrom('narendrabaratam43@gmail.com', 'Stepcone 2K25'); // Your email and display name
             $mail->addAddress($email, $name); // Send email to the new email address
 
             // Content
@@ -53,7 +53,7 @@ if (isset($_POST['acceptUpdate'])) {
             $mail->Body = "Dear $name,<br>Your details have been updated successfully with the following information:<br>
                            Name: $name<br>
                            Branch: $branch<br>
-                           Semester: $sem<br>
+                           Semester: $year<br>
                            Email: $email<br>
                            Phone: $phone<br>
                            College: $college<br>";
@@ -95,7 +95,6 @@ if (isset($_POST['acceptUpdate'])) {
         function rejectUpdate() {
             // Hide the modal
             document.getElementById("confirmationModal").style.display = "none";
-            // Optionally handle rejection here
             alert("Update rejected.");
         }
     </script>
@@ -155,8 +154,8 @@ if (isset($_POST['acceptUpdate'])) {
                     <input type="text" name="branch" value="<?php echo htmlspecialchars($student['branch']); ?>" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="sem">Semester:</label>
-                    <input type="number" name="sem" value="<?php echo htmlspecialchars($student['sem']); ?>" class="form-control" required>
+                    <label for="year">Year:</label>
+                    <input type="number" name="year" value="<?php echo htmlspecialchars($student['year']); ?>"   class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>

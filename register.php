@@ -32,6 +32,7 @@ if (isset($_POST["update"])) {
         exit();
     }
 
+    // Ensure all fields are filled
     if (!empty($usn) && !empty($student_type) && !empty($name) && !empty($branch) && !empty($year) && !empty($email) && !empty($phone) && !empty($college)) {
         include 'classes/db1.php';
 
@@ -57,19 +58,20 @@ if (isset($_POST["update"])) {
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
                     $mail->Username = 'narendrabaratam2004@gmail.com';
-                    $mail->Password = 'qzmt actw tixh pval'; // Use your app password here
+                    $mail->Password = 'zawr muth kyko deex'; 
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
 
-                    // Recipients
-                    $mail->setFrom('narendrabaratam2004@gmail.com', 'Stepcone 2K25');
+                    // Sender and recipient
+                    $mail->setFrom('narendrabaratam2004@gmail.com', 'Stepcone 2K25 Team');
                     $mail->addAddress($email, $name);
 
                     // Content
                     $mail->isHTML(true);
                     $mail->Subject = 'Registration Confirmation';
-                    $mail->Body = "Dear $name,<br><br>You have successfully completed your basic registration.<br><br>Thank you,<br>Sanchalana 2K20 Team";
+                    $mail->Body = "<p>Dear $name,</p><p>You have successfully completed your basic registration for Sanchalana 2K20.</p><p>Thank you,<br>Sanchalana 2K20 Team</p>";
 
+                    // Send the email
                     $mail->send();
                     echo "<script>
                     alert('Registered Successfully! A confirmation email has been sent to $email');
@@ -77,7 +79,7 @@ if (isset($_POST["update"])) {
                     </script>";
                 } catch (Exception $e) {
                     echo "<script>
-                    alert('Registration successful, but email could not be sent. Mailer Error: {$mail->ErrorInfo}');
+                    alert('Registration successful, but email could not be sent. Error: {$mail->ErrorInfo}');
                     window.location.href='index.php';
                     </script>";
                 }
@@ -109,7 +111,7 @@ if (isset($_POST["update"])) {
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sanchalana2k20</title>
+    <title>Stepcone 2K25</title>
     <?php require 'utils/styles.php'; ?>
 </head>
 <body>
@@ -158,7 +160,7 @@ if (isset($_POST["update"])) {
                 <label>College:</label><br>
                 <input type="text" name="college" class="form-control" required><br><br>
 
-                <button type="submit" name="update" required>Submit</button><br><br>
+                <button type="submit" name="update">Submit</button><br><br>
                 <a href="usn.php"><u>Already registered?</u></a>
             </form>
         </div>
@@ -168,4 +170,3 @@ if (isset($_POST["update"])) {
 <?php require 'utils/footer.php'; ?>
 </body>
 </html>
-register.php

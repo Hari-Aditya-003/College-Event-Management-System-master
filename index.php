@@ -1,8 +1,12 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Sanchanala2k20</title>
+        <title>Stepcone 2K25 </title>
         <?php require 'utils/styles.php';?>
       
         
@@ -134,6 +138,35 @@
                     </div><!--container div-->
                 </section>
             </div><!--row div-->
+            <div class="container">
+            <div class="col-md-12">
+                <hr>
+            </div>
+            </div>
+
+            <div class="row">
+                <section>
+                    <div class="container">
+                        <div class="col-md-6"><!--image holder with 6 grid columns-->
+                            <img src="images/paper.jpeg" class="img-responsive">
+                        </div>
+                        <div class="subcontent col-md-6"><!--Text holder with 6 column grid-->
+                            <h1 style="color:#003300 ; font-size:38px ;"><strong><u>CENTRAL EVENTS</u></strong></h1><!--title-->
+                            <p><!--content-->
+                                 EMBRACE YOUR TALENT BY PARTICIPATING IN OUR DIFFERENT OFF-STAGE EVENTS!
+                            </p>
+                            
+                            
+                            <br><br><br>
+                            <?php 
+                            $id=5;
+                            echo
+                             '<a class="btn btn-default" href="viewEvent.php?id='.$id .'"> <span class="glyphicon glyphicon-circle-arrow-right"></span>View CENTRAL Events</a>'
+                        ?>
+                        </div><!--subcontent div-->
+                    </div><!--container div-->
+                </section>
+            </div>
         </div><!--body content div-->
   
         <?php require 'utils/footer.php'; ?><!--footer content. file found in utils folder-->

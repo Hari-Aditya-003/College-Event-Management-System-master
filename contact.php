@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Sanchanala 2k20</title>
+        <title>Stepcone 2K25</title>
         <?php require 'utils/styles.php'; ?><!--css links. file found in utils folder-->
         <head>
     <body>

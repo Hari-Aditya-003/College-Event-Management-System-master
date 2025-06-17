@@ -1,10 +1,13 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
 include_once 'classes/db1.php';
 
 if (isset($_GET['id'])) {
-    $event_id = (int)$_GET['id']; // Typecasting to an integer for safety
+    $event_id = (int)$_GET['id'];
 
-    // Fetch the event data to pre-fill the form
     $result = mysqli_query($conn, "
         SELECT e.event_title, e.event_price, ei.Date, ei.time, ei.location 
         FROM events e
@@ -21,14 +24,12 @@ if (isset($_GET['id'])) {
 }
 
 if (isset($_POST['update'])) {
-    // Get the updated values from the form
     $event_title = mysqli_real_escape_string($conn, $_POST['event_title']);
     $event_price = (float)$_POST['event_price'];
     $date = mysqli_real_escape_string($conn, $_POST['date']);
     $time = mysqli_real_escape_string($conn, $_POST['time']);
     $location = mysqli_real_escape_string($conn, $_POST['location']);
 
-    // Prepare and execute the update queries
     $update_events_query = "
         UPDATE events 
         SET event_title='$event_title', event_price=$event_price 
@@ -41,34 +42,76 @@ if (isset($_POST['update'])) {
         WHERE event_id=$event_id;
     ";
 
-    // Start the transaction
     mysqli_begin_transaction($conn);
 
     try {
-        // Execute the queries
         if (mysqli_query($conn, $update_events_query) && mysqli_query($conn, $update_event_info_query)) {
-            // Commit the transaction
             mysqli_commit($conn);
+
+            // Fetch all participant emails
+            $participant_query = "SELECT email, name FROM participent";
+            $participants = mysqli_query($conn, $participant_query);
+
+            if (mysqli_num_rows($participants) > 0) {
+                // Create a new PHPMailer instance
+                $mail = new PHPMailer(true);
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'narendrabaratam43@gmail.com';
+                $mail->Password = 'hges oneh rfsg azuv';
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+                $mail->setFrom('narendrabaratam43@gmail.com', 'Stepcone 2K25 Team');
+
+                // Loop through all participants
+                while ($participant = mysqli_fetch_assoc($participants)) {
+                    $mail->clearAddresses();  // Clear recipients for each email
+                    $mail->addAddress($participant['email'], $participant['name']);
+
+                    // Email content
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Event Update Notification';
+                    $mail->Body = "
+                        Dear {$participant['name']},<br><br>
+                        The details for the event <strong>$event_title</strong> have been updated.<br><br>
+                        <strong>New Details:</strong><br>
+                        Date: $date<br>
+                        Time: $time<br>
+                        Location: $location<br>
+                        Price: $event_price<br><br>
+                        Thank you,<br>Sanchalana 2K20 Team";
+
+                    try {
+                        $mail->send();
+                    } catch (Exception $e) {
+                        echo "Mailer Error: {$mail->ErrorInfo}";
+                    }
+                }
+            }
+
             echo "<script>
-                    alert('Event updated successfully!');
+                    alert('Event updated successfully! Notifications sent to participants.');
                     window.location.href = 'adminPage.php';
                   </script>";
         } else {
             throw new Exception("Error updating record: " . mysqli_error($conn));
         }
     } catch (Exception $e) {
-        // Rollback the transaction if something went wrong
         mysqli_rollback($conn);
         echo "Failed to update event: " . $e->getMessage();
     }
 }
 ?>
 
+<!-- HTML form remains the same -->
+
+
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Event - Sanchanala 2k20</title>
+    <title>Update Event - Stepcone 2K25</title>
     <?php include 'utils/styles.php'; ?> <!-- CSS links -->
     <style>
         .form-group {

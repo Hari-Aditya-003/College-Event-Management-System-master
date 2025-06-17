@@ -7,7 +7,7 @@ $result = mysqli_query($conn, "SELECT * FROM sponsors ORDER BY company_name");
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sanchanala 2k20</title>
+    <title>Stepcone 2K25</title>
     <?php require 'utils/styles.php'; ?><!--css links. file found in utils folder-->
 </head>
 
@@ -26,6 +26,7 @@ $result = mysqli_query($conn, "SELECT * FROM sponsors ORDER BY company_name");
                     <th>Sponsor Name</th>
                     <th>Referred By</th>
                     <th>Amount</th>
+                    <th>Date</th>
                 </tr>
                 <?php
                 while ($row = mysqli_fetch_array($result)) {
@@ -35,6 +36,7 @@ $result = mysqli_query($conn, "SELECT * FROM sponsors ORDER BY company_name");
                     <td><?php echo $row["sponsor_name"]; ?></td>
                     <td><?php echo $row["referred_by"]; ?></td>
                     <td><?php echo $row["amount"]; ?></td>
+                    <td><?php echo $row["date"]; ?></td>
                 </tr>
                 <?php
                 }

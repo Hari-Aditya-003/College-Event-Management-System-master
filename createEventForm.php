@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sanchalana 2k20</title>
+    <title>SStepcone 2K25</title>
     <?php require 'utils/styles.php'; ?> <!-- CSS links. file found in utils folder -->
 </head>
 <body>
@@ -83,21 +83,25 @@ if (isset($_POST["update"])) {
     if (!empty($event_id) && !empty($event_title) && !empty($event_price) && !empty($img_link) && !empty($type_id)) {
         include 'classes/db1.php';
 
-        // Prepare the INSERT queries
-        $INSERT = "INSERT INTO events(event_id, event_title, event_price, img_link, type_id) 
-                    VALUES ($event_id, '$event_title', $event_price, '$img_link', $type_id);";
+        // Prepare individual INSERT queries
+        $INSERT_EVENTS = "INSERT INTO events(event_id, event_title, event_price, img_link, type_id) 
+                          VALUES ($event_id, '$event_title', $event_price, '$img_link', $type_id);";
 
-        $INSERT .= "INSERT INTO event_info(event_id, Date, time, location) 
-                     VALUES ($event_id, '$Date', '$time', '$location');";
+        $INSERT_EVENT_INFO = "INSERT INTO event_info(event_id, Date, time, location) 
+                              VALUES ($event_id, '$Date', '$time', '$location');";
 
-        $INSERT .= "INSERT INTO student_coordinator(sid, st_name, phone, event_id) 
-                     VALUES ($event_id, '$st_name', '$st_phone', $event_id);";
+        $INSERT_STUDENT_COORDINATOR = "INSERT INTO student_coordinator(sid, st_name, phone, event_id) 
+                                        VALUES ($event_id, '$st_name', '$st_phone', $event_id);";
 
-        $INSERT .= "INSERT INTO staff_coordinator(stid, name, phone, event_id) 
-                     VALUES ($event_id, '$name', '$sphone', $event_id);";
+        $INSERT_STAFF_COORDINATOR = "INSERT INTO staff_coordinator(stid, name, phone, event_id) 
+                                      VALUES ($event_id, '$name', '$sphone', $event_id);";
 
-        // Execute the multi-query
-        if ($conn->multi_query($INSERT) === TRUE) {
+        // Execute each query separately
+        if ($conn->query($INSERT_EVENTS) === TRUE && 
+            $conn->query($INSERT_EVENT_INFO) === TRUE &&
+            $conn->query($INSERT_STUDENT_COORDINATOR) === TRUE &&
+            $conn->query($INSERT_STAFF_COORDINATOR) === TRUE) {
+            
             // Fetch all participant emails
             $query = "SELECT email FROM participent";
             $result = $conn->query($query);
@@ -109,13 +113,13 @@ if (isset($_POST["update"])) {
                     $mail->isSMTP();
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
-                    $mail->Username = 'narendrabaratam2004@gmail.com';
-                    $mail->Password = 'qzmt actw tixh pval'; // Replace with your app password
+                    $mail->Username = 'narendrabaratam43@gmail.com';
+                    $mail->Password = 'hges oneh rfsg azuv'; // Replace with your app password
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
 
                     // Sender information
-                    $mail->setFrom('narendrabaratam2004@gmail.com', 'Stepcone 2K25');
+                    $mail->setFrom('narendrabaratam43@gmail.com', 'Stepcone 2K25');
 
                     // Email content
                     $mail->isHTML(true);
@@ -129,7 +133,7 @@ if (isset($_POST["update"])) {
                         <b>Location:</b> $location<br>
                         <b>Price:</b> $event_price<br><br>
                         We hope to see you there!<br>
-                        Regards,<br>Sanchalana 2K20 Team
+                        Regards,<br>Stepcone 2K25 Team
                     ";
 
                     // Add recipient emails

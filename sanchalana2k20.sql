@@ -55,7 +55,8 @@ INSERT INTO `events` (`event_id`, `event_title`, `event_price`, `participents`, 
 (11, 'Cooking-Without-Fire', 50, 0, 'images/cook.jpg', 4),
 (12, 'Short-Movie', 200, 0, 'images/offstage.jpg', 4),
 (13, 'Mehandi', 100, 0, 'images/mehandi.jpg', 4),
-(14, 'Rangoli', 50, 0, 'images/cs03.jpg', 3);
+(14, 'Rangoli', 50, 0, 'images/cs03.jpg', 3),
+(15, 'Bengoli', 50, 0, 'images/cs03.jpg', 5);;
 
 -- --------------------------------------------------------
 
@@ -119,8 +120,7 @@ INSERT INTO `event_type` (`type_id`, `type_title`) VALUES
 (2, 'CSE EVENTS'),
 (3, 'MECHANICAL EVENTS'),
 (4, 'EEE EVENTS'),
-(5, 'ECE EVENTS'),
-(6, 'CIVIL EVENTS');
+(5, 'CENTRAL EVENTS');
 
 
 -- --------------------------------------------------------

@@ -48,7 +48,7 @@ if (isset($_POST['stripeToken']) && isset($_POST['usn']) && isset($_POST['event_
                         $mail->SMTPSecure = 'tls';
                         $mail->Port = 587;
 
-                        $mail->setFrom('your_email@gmail.com', 'Sanchalana 2K20');
+                        $mail->setFrom('narendrabaratam2004@gmail.com', 'Sanchalana 2K20');
                         $mail->addAddress($email);
 
                         $mail->isHTML(true);

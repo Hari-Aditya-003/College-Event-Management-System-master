@@ -8,19 +8,20 @@ $type_id = isset($_GET['type_id']) ? intval($_GET['type_id']) : null;
 $sql = "
     SELECT e.event_title, e.event_id, e.event_price, ef.Date, ef.time, ef.location, 
            s.name AS staff_name, st.st_name AS student_name,
-           et.type_title,
            COUNT(CASE WHEN p.student_type = 'Internal' THEN 1 END) AS internal_count,
-           COUNT(CASE WHEN p.student_type = 'External' THEN 1 END) AS external_count
+           COUNT(CASE WHEN p.student_type = 'External' THEN 1 END) AS external_count,
+           COUNT(CASE WHEN p.student_type = 'Internal' THEN 1 END) + COUNT(CASE WHEN p.student_type = 'External' THEN 1 END) AS total_participants
     FROM events e
     JOIN event_info ef ON e.event_id = ef.event_id
     JOIN student_coordinator st ON e.event_id = st.event_id
     JOIN staff_coordinator s ON e.event_id = s.event_id
-    JOIN event_type et ON e.type_id = et.type_id
     LEFT JOIN registered r ON e.event_id = r.event_id
-    LEFT JOIN participent p ON r.usn = p.usn"; // Join with the participent table to get participant types
+    LEFT JOIN participent p ON r.usn = p.usn
+";
 
+// Apply the filter for type_id if it's set
 if ($type_id) {
-    $sql .= " WHERE e.type_id = $type_id"; // Add filter for type_id
+    $sql .= " WHERE e.type_id = $type_id";
 }
 
 $sql .= " GROUP BY e.event_id"; // Group by event to calculate participant counts
@@ -33,14 +34,29 @@ $eventTypesResult = mysqli_query($conn, "
     FROM events e 
     JOIN event_type et ON e.type_id = et.type_id
 ");
+
+$total_internal = 0;
+$total_external = 0;
+$total_amount = 0;
+$total_internal_amount = 0;
+$total_external_amount = 0;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sanchalana 2k20</title>
+    <title>Stepcone 2K25</title>
     <style>
+        body {
+            font-family: Arial, sans-serif; /* Set a default font */
+            margin: 0; /* Remove default margin */
+            background-image: url('path_to_your_background_image.jpg'); /* Background image */
+            background-size: cover; /* Cover the whole screen */
+            background-repeat: no-repeat; /* Do not repeat the image */
+            background-position: center; /* Center the background image */
+        }
         .btn {
             padding: 5px 10px;
             text-align: center;
@@ -92,17 +108,15 @@ $eventTypesResult = mysqli_query($conn, "
             border-color: #0056b3; /* Change border color on focus */
         }
 
-        label {
-            font-size: 18px; /* Label font size */
-            font-weight: bold; /* Bold label */
-            margin-bottom: 10px; /* Margin below label */
-            display: block; /* Make label block-level */
-        }
-
         .table {
             width: 100%; /* Full width table */
+            max-width: 1500px; /* Maximum width for the table */
             border-collapse: collapse; /* Merge borders */
             margin-top: 20px; /* Margin above table */
+            background-color: white; /* Table background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow effect for the table */
+            border-radius: 5px; /* Rounded corners for the table */
+            overflow: hidden; /* Hide overflow */
         }
 
         .table th, .table td {
@@ -119,6 +133,26 @@ $eventTypesResult = mysqli_query($conn, "
         .table tr:hover {
             background-color: #f1f1f1; /* Highlight row on hover */
         }
+        .create-button {
+            display: inline-block; /* Ensures the button takes only the space it needs */
+            padding: 10px 20px; /* Adds padding for a larger click area */
+            font-size: 16px; /* Increases font size */
+            font-weight: bold; /* Bold text */
+            color: white; /* White text */
+            background-color: #007bff; /* Blue background */
+            border-radius: 5px; /* Rounded corners */
+            text-align: center; /* Center-align text */
+            text-decoration: none; /* Remove underline */
+            margin-top: 20px; /* Space above the button */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+            min-width: 150px; /* Minimum width for consistency */
+        }
+
+        .create-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+        }
+
     </style>
 </head>
 
@@ -149,7 +183,11 @@ $eventTypesResult = mysqli_query($conn, "
                             <th>Event Name</th>
                             <th>Internal Participants</th>
                             <th>External Participants</th>
+                            <th>Total Participants</th>
                             <th>Price</th>
+                            <th>Internal Amount</th>
+                            <th>External Amount</th>
+                            <th>Total Amount</th>
                             <th>Student Coordinator</th>
                             <th>Staff Coordinator</th>
                             <th>Date</th>
@@ -160,11 +198,32 @@ $eventTypesResult = mysqli_query($conn, "
                     </thead>
                     <tbody>
                         <?php while ($row = mysqli_fetch_array($result)): ?>
+                            <?php
+                                // Calculate internal, external, and total amounts
+                                $internal_amount = $row['internal_count'] * $row['event_price'];
+                                $external_amount = $row['external_count'] * $row['event_price'];
+                                $total_amount_row = $internal_amount + $external_amount;
+                                
+                                // Accumulate totals
+                                $total_internal += $row['internal_count'];
+                                $total_external += $row['external_count'];
+                                $total_internal_amount += $internal_amount; // Fix: use the calculated internal amount
+                                $total_external_amount += $external_amount; // Fix: use the calculated external amount
+                                $total_amount += $total_amount_row; // Total amount of this row
+                            ?>
                             <tr>
-                                <td><?php echo $row['event_title']; ?></td>
-                                <td><?php echo $row['internal_count']; ?></td> <!-- Display internal participant count -->
-                                <td><?php echo $row['external_count']; ?></td> <!-- Display external participant count -->
+                                <td>
+                                    <a href="eventDetails.php?id=<?php echo $row['event_id']; ?>" style="color: inherit; text-decoration: none;">
+                                        <?php echo $row['event_title']; ?>
+                                    </a>
+                                </td>
+                                <td><?php echo $row['internal_count']; ?></td>
+                                <td><?php echo $row['external_count']; ?></td>
+                                <td><?php echo $row['total_participants']; ?></td>
                                 <td><?php echo $row['event_price']; ?></td>
+                                <td><?php echo $internal_amount; ?></td>
+                                <td><?php echo $external_amount; ?></td>
+                                <td><?php echo $total_amount_row; ?></td>
                                 <td><?php echo $row['student_name']; ?></td>
                                 <td><?php echo $row['staff_name']; ?></td>
                                 <td><?php echo $row['Date']; ?></td>
@@ -177,22 +236,33 @@ $eventTypesResult = mysqli_query($conn, "
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><strong><?php echo $total_internal; ?></strong></td>
+                            <td><strong><?php echo $total_external; ?></strong></td>
+                            <td><strong><?php echo $total_internal + $total_external; ?></strong></td>
+                            <td></td>
+                            <td><strong><?php echo $total_internal_amount; ?></strong></td>
+                            <td><strong><?php echo $total_external_amount; ?></strong></td>
+                            <td><strong><?php echo $total_amount; ?></strong></td>
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
                 </table>
             <?php else: ?>
                 <p>No events found.</p>
             <?php endif; ?>
-            
-            <a class="btn btn-default" href="createEventForm.php">Create Event</a>
+
+            <a href="createEventForm.php" class="create-button">Create New Event</a>
         </div>
     </div>
 
-    <?php require 'utils/footer.php'; ?>
-
     <script>
         function filterEvents() {
-            const typeId = document.getElementById('eventTypeDropdown').value;
-            // Redirect to the same page with the selected type_id as a query parameter
-            window.location.href = `<?php echo $_SERVER['PHP_SELF']; ?>?type_id=${typeId}`;
+            const dropdown = document.getElementById('eventTypeDropdown');
+            const selectedType = dropdown.value;
+            window.location.href = `adminPage.php?type_id=${selectedType}`; // Update this line with your PHP file name
         }
     </script>
 </body>
